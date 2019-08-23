@@ -18,7 +18,7 @@ const localize = nls.loadMessageBundle();
 
 const projectRoot = path.join(__dirname, "..", "..", "..");
 const version = JSON.parse(fs.readFileSync(path.join(projectRoot, "package.json"), "utf-8")).version;
-const extensionName = "react-native-tools/hermes";
+const extensionName = "react-native-tools";
 const telemetryReporter = new ReassignableTelemetryReporter(new NullTelemetryReporter());
 
 function bailOut(reason: string): void {

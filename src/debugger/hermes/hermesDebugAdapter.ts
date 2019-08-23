@@ -31,9 +31,8 @@ export class HermesDebugAdapter extends ChromeDebugAdapter {
     private outputLogger: (message: string, error?: boolean | string) => void;
     private projectRootPath: string;
     private remoteExtension: RemoteExtension;
-    private isSettingsInitialized: boolean;
+    private isSettingsInitialized: boolean; // used to prevent parameters' reinstallation when attach is called from launch
     private previousAttachArgs: IHermesAttachRequestArgs;
-    private eventNamePrefix: string;
 
     public constructor(opts: IChromeDebugSessionOpts, debugSession: ChromeDebugSession) {
         super(opts, debugSession);
@@ -53,7 +52,6 @@ export class HermesDebugAdapter extends ChromeDebugAdapter {
             debugSession.sendEvent(new OutputEvent(message + newLine, category));
         };
 
-        this.eventNamePrefix = "/hermes";
         this.isSettingsInitialized = false;
     }
 
@@ -63,13 +61,17 @@ export class HermesDebugAdapter extends ChromeDebugAdapter {
                 value: launchArgs.platform,
                 isPii: false,
             },
+            isHermes: {
+                value: true,
+                isPii: false,
+            },
         };
 
         return new Promise<void>((resolve, reject) => this.initializeSettings(launchArgs)
             .then(() => {
                 this.outputLogger("Launching the app");
                 logger.verbose(`Launching the app: ${JSON.stringify(launchArgs, null , 2)}`);
-                return TelemetryHelper.generate(`${this.eventNamePrefix}/launch`, extProps, (generator) => {
+                return TelemetryHelper.generate("launch", extProps, (generator) => {
                     return this.remoteExtension.launch({ "arguments": launchArgs })
                         .then(() => {
                             return this.remoteExtension.getPackagerPort(launchArgs.cwd);
@@ -94,6 +96,10 @@ export class HermesDebugAdapter extends ChromeDebugAdapter {
                 value: attachArgs.platform,
                 isPii: false,
             },
+            isHermes: {
+                value: true,
+                isPii: false,
+            },
         };
 
         this.previousAttachArgs = attachArgs;
@@ -102,7 +108,7 @@ export class HermesDebugAdapter extends ChromeDebugAdapter {
             .then(() => {
                 this.outputLogger("Attaching to the app");
                 logger.verbose(`Attaching to app: ${JSON.stringify(attachArgs, null , 2)}`);
-                return TelemetryHelper.generate(`${this.eventNamePrefix}/attach`, extProps, (generator) => {
+                return TelemetryHelper.generate("attach", extProps, (generator) => {
                     return this.remoteExtension.getPackagerPort(attachArgs.cwd)
                         .then((packagerPort: number) => {
                             this.outputLogger(`Connecting to ${packagerPort} packager port`);
@@ -162,18 +168,18 @@ export class HermesDebugAdapter extends ChromeDebugAdapter {
 
                 // Start to send telemetry
                 (this._session as any).getTelemetryReporter().reassignTo(new RemoteTelemetryReporter(
-                    `react-native-tools${this.eventNamePrefix}`, version, Telemetry.APPINSIGHTS_INSTRUMENTATIONKEY, this.projectRootPath));
+                    "react-native-tools", version, Telemetry.APPINSIGHTS_INSTRUMENTATIONKEY, this.projectRootPath));
 
                 if (args.program) {
                     // TODO: Remove this warning when program property will be completely removed
                     logger.warn(localize("ProgramPropertyDeprecationWarning", "Launched debug configuration contains 'program' property which is deprecated and will be removed soon. Please replace it with: \"cwd\": \"${workspaceFolder}\""));
-                    const useProgramEvent = TelemetryHelper.createTelemetryEvent(`${this.eventNamePrefix}/useProgramProperty`);
-                    Telemetry.send(useProgramEvent);
+                    const useProgramEvent = TelemetryHelper.createTelemetryEvent("useProgramProperty");
+                    Telemetry.sendHermes(useProgramEvent);
                 }
                 if (args.cwd) {
                     // To match count of 'cwd' users with 'program' users. TODO: Remove when program property will be removed
-                    const useCwdEvent = TelemetryHelper.createTelemetryEvent(`${this.eventNamePrefix}/useCwdProperty`);
-                    Telemetry.send(useCwdEvent);
+                    const useCwdEvent = TelemetryHelper.createTelemetryEvent("useCwdProperty");
+                    Telemetry.sendHermes(useCwdEvent);
                 }
 
                 this.isSettingsInitialized = true;

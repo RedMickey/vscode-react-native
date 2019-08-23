@@ -138,6 +138,11 @@ export module Telemetry {
         }
     }
 
+    export function sendHermes(event: TelemetryEvent, ignoreOptIn: boolean = false): void {
+        event.properties.isHermes = true;
+        send(event, ignoreOptIn);
+    }
+
     export function send(event: TelemetryEvent, ignoreOptIn: boolean = false): void {
         if (Telemetry.isOptedIn || ignoreOptIn) {
             try {
