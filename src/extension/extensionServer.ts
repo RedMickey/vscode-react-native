@@ -183,6 +183,7 @@ export class ExtensionServer implements vscode.Disposable {
 
     private launch(request: any): Promise<any> {
         let mobilePlatformOptions = requestSetup(request.arguments);
+        let eventNamePrefix = "";
 
         // We add the parameter if it's defined (adapter crashes otherwise)
         if (!isNullOrUndefined(request.arguments.logCatArguments)) {
@@ -205,6 +206,10 @@ export class ExtensionServer implements vscode.Disposable {
             mobilePlatformOptions.debugLaunchActivity = request.arguments.launchActivity;
         }
 
+        if (request.arguments.type === "reactnativehermes") {
+            eventNamePrefix = "/hermes/";
+        }
+
         mobilePlatformOptions.packagerPort = SettingsHelper.getPackagerPort(request.arguments.cwd || request.arguments.program);
         const platformDeps: MobilePlatformDeps = {
             packager: this.reactNativePackager,
@@ -219,7 +224,7 @@ export class ExtensionServer implements vscode.Disposable {
                 },
             };
 
-            TelemetryHelper.generate("launch", extProps, (generator) => {
+            TelemetryHelper.generate(`${eventNamePrefix}launch`, extProps, (generator) => {
                 generator.step("checkPlatformCompatibility");
                 TargetPlatformHelper.checkTargetPlatformSupport(mobilePlatformOptions.platform);
                 return mobilePlatform.beforeStartPackager()

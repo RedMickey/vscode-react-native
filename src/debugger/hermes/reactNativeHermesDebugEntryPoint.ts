@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for details.
 
-import * as os from 'os';
+// import * as os from "os";
 import * as fs from "fs";
 import * as path from "path";
 import { TelemetryHelper } from "../../common/telemetryHelper";
@@ -10,14 +10,15 @@ import { ErrorHelper } from "../../common/error/errorHelper";
 import { InternalErrorCode } from "../../common/error/internalErrorCode";
 import { NullTelemetryReporter, ReassignableTelemetryReporter } from "../../common/telemetryReporters";
 import { HermesDebugAdapter } from "./hermesDebugAdapter";
-import { ChromeDebugSession, BaseSourceMapTransformer, BasePathTransformer } from "vscode-chrome-debug-core";
+import { makeHermesSession } from "./hermesSessionWrapper";
+import { ChromeDebugSession } from "vscode-chrome-debug-core";
 import { DebugSession, OutputEvent, TerminatedEvent } from "vscode-debugadapter";
 import * as nls from "vscode-nls";
 const localize = nls.loadMessageBundle();
 
 const projectRoot = path.join(__dirname, "..", "..", "..");
 const version = JSON.parse(fs.readFileSync(path.join(projectRoot, "package.json"), "utf-8")).version;
-const extensionName = "react-native-tools";
+const extensionName = "react-native-tools/hermes";
 const telemetryReporter = new ReassignableTelemetryReporter(new NullTelemetryReporter());
 
 function bailOut(reason: string): void {
@@ -28,14 +29,16 @@ function bailOut(reason: string): void {
 
 function codeToRun() {
     try {
+
+        let session: typeof ChromeDebugSession;
+
         try {
-            ChromeDebugSession.run(ChromeDebugSession.getSession({
+            session = makeHermesSession({
                 adapter: HermesDebugAdapter,
-                extensionName: extensionName,
-                pathTransformer: BasePathTransformer,
-                sourceMapTransformer: BaseSourceMapTransformer,
-                logFilePath: path.resolve(os.tmpdir(), 'vscode-chrome-debug.txt'),
-            }));
+                extensionName: extensionName },
+                telemetryReporter);
+
+            ChromeDebugSession.run(session);
         } catch (e) {
             const debugSession = new DebugSession();
             // Start session before sending any events otherwise the client wouldn't receive them
