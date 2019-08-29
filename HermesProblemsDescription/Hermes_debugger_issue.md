@@ -12,42 +12,42 @@ Here is a link for sources of the direct debugger: https://github.com/RedMickey/
 
   |Debugging using VS Code RNT Hermes debugger prototype|Debugging using Chrome|
   |---|---|
-  |<img src="./images2/Screen Shot 2019-08-29 at 13.05.33.png" alt="drawing"/>|<img src="./images2/Screen Shot 2019-08-29 at 13.06.35.png" alt="drawing"/>|
+  |<img src="./images2/ScreenShot2019-08-29at13.05.33.png" alt="drawing"/>|<img src="./images2/ScreenShot2019-08-29at13.06.35.png" alt="drawing"/>|
 
 2) The debugger doesn’t show value of numeric variables.
 
   |Debugging using VS Code RNT Hermes debugger prototype|Debugging using Chrome|
   |---|---|
-  |<img src="./images2/Screen Shot 2019-08-29 at 15.21.23.png" alt="drawing"/>|<img src="./images2/Screen Shot 2019-08-29 at 15.23.59.png" alt="drawing"/>|
+  |<img src="./images2/ScreenShot2019-08-29at15.21.23.png" alt="drawing"/>|<img src="./images2/ScreenShot2019-08-29at15.23.59.png" alt="drawing"/>|
 
 3) The debugger shows additional VM_unknown calls in Call Stack.
   <br/>The debugger displays all the calls as well as Google Chrome, but also adds unknown calls.
 
   |Debugging using VS Code RNT Hermes debugger prototype|Debugging using Chrome|
   |---|---|
-  |<img src="./images2/Screen Shot 2019-08-29 at 13.10.11.png" alt="drawing"/>|<img src="./images2/Screen Shot 2019-08-29 at 13.10.44.png" alt="drawing"/>|
+  |<img src="./images2/ScreenShot2019-08-29at13.10.11.png" alt="drawing"/>|<img src="./images2/ScreenShot2019-08-29at13.10.44.png" alt="drawing"/>|
 
   [Logs](./logs/appLogs123.txt) for problems 1, 2, 3.
 
 4) The debugger doesn’t provide complete object data (For example, Date object, Map object - there is only an object name without internal data).
   <br/> If an object contains an array the debugger doesn't display the object's data.
-  <br/> Google Chtome displays some objects correctly, but not all (e.g. Map object).
+  <br/> Google Chrome displays some objects correctly, but not all (e.g. Map object).
   <br/>The debugger doesn’t provide properties containing in “this” object.
 
   |Debugging using VS Code RNT Hermes debugger prototype|Debugging using Chrome|
   |---|---|
-  |<img src="./images2/Screen Shot 2019-08-29 at 13.26.54.png" alt="drawing"/>|<img src="./images2/Screen Shot 2019-08-29 at 13.27.40.png" alt="drawing"/>|
-  |<img src="./images2/Screen Shot 2019-08-29 at 16.11.34.png" alt="drawing"/>|<img src="./images2/Screen Shot 2019-08-29 at 15.46.06.png" alt="drawing"/>|
+  |<img src="./images2/ScreenShot2019-08-29at13.26.54.png" alt="drawing"/>|<img src="./images2/ScreenShot2019-08-29at13.27.40.png" alt="drawing"/>|
+  |<img src="./images2/ScreenShot2019-08-29at16.11.34.png" alt="drawing"/>|<img src="./images2/ScreenShot2019-08-29at15.46.06.png" alt="drawing"/>|
 
   [Logs](./logs/appLogs4-1.txt) for problem 4 - 1 table row.
   <br/>[Logs](./logs/appLogs4-2.txt) for problem 4 - 2 table row.
 
 5) The debugger doesn’t show local variables, if there is any array definition in a handler function.
-  <br/>The debugger remove local variables data only when it comes an array definition. Google Chtome displays array's data.
+  <br/>The debugger remove local variables data only when it comes an array definition. Google Chrome displays array's data.
 
   |Debugging using VS Code RNT Hermes debugger prototype|Debugging using Chrome|
   |---|---|
-  |Before the array definition: <br/><img src="./images2/Screen Shot 2019-08-29 at 15.59.44.png" alt="drawing"/>|<img src="./images2/Screen Shot 2019-08-29 at 16.04.51.png" alt="drawing"/>|
-  |After the array definition: <br/><img src="./images2/Screen Shot 2019-08-29 at 16.00.01.png" alt="drawing"/>||
+  |Before the array definition: <br/><img src="./images2/ScreenShot2019-08-29at15.59.44.png" alt="drawing"/>|<img src="./images2/ScreenShot2019-08-29at16.04.51.png" alt="drawing"/>|
+  |After the array definition: <br/><img src="./images2/ScreenShot2019-08-29at16.00.01.png" alt="drawing"/>||
 
   [Logs](./logs/appLogs5.txt) for problem 5.
